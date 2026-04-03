@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Simple English Translator",
+  "version": "1.1",
+  "description": "コンテキストを指定できるAIモード搭載の翻訳拡張機能です。",
+  "permissions": [
+    "storage"
+  ],
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "default_title": "翻訳する"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "host_permissions": [
+    "https://translate.googleapis.com/",
+    "https://generativelanguage.googleapis.com/"
+  ]
+}

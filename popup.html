@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 340px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+    }
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    /* Segmented Control for Language */
+    .toggle-container {
+      display: flex;
+      background-color: #f1f3f4;
+      border-radius: 20px;
+      padding: 4px;
+      position: relative;
+      width: 180px;
+      cursor: pointer;
+    }
+    .toggle-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 86px;
+      height: 28px;
+      background-color: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+    .toggle-container.is-en-ja .toggle-slider {
+      transform: translateX(86px);
+    }
+    .toggle-option {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 28px;
+      position: relative;
+      z-index: 1;
+      color: #5f6368;
+      user-select: none;
+      transition: color 0.3s;
+    }
+    .toggle-container.is-ja-en .toggle-option[data-mode="ja-en"],
+    .toggle-container.is-en-ja .toggle-option[data-mode="en-ja"] {
+      color: #1a73e8;
+    }
+
+    /* iOS Style AI Toggle Switch */
+    .ai-switch-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .ai-switch-label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #3c4043;
+      user-select: none;
+    }
+    .ai-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+    .ai-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 22px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #9c27b0; /* AI mode color */
+    }
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    /* AI Context Section */
+    #aiSection {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px;
+      background-color: #f3e5f5; /* Light purple */
+      border-radius: 8px;
+    }
+    #aiSection.active {
+      display: block;
+    }
+    .context-input-wrapper {
+      margin-bottom: 8px;
+    }
+    #contextInput {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ce93d8;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    #contextInput:focus {
+      outline: none;
+      border-color: #9c27b0;
+      box-shadow: 0 0 0 1px #9c27b0;
+    }
+    .history-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      background-color: #e1bee7;
+      color: #6a1b9a;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+    .chip:hover {
+      background-color: #ce93d8;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      margin-bottom: 12px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      resize: none;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 1px #1a73e8;
+    }
+    button.main-btn {
+      width: 100%;
+      padding: 12px;
+      cursor: pointer;
+      background-color: #1a73e8;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    button.main-btn.ai-active {
+      background-color: #9c27b0;
+    }
+    button.main-btn:hover {
+      opacity: 0.9;
+    }
+    #result {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      min-height: 40px;
+      font-size: 14px;
+      color: #202124;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    
+    .link-btn {
+      background: none;
+      border: none;
+      color: #1a73e8;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+      font-size: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-container">
+    <div class="toggle-container is-ja-en" id="langToggle">
+      <div class="toggle-slider"></div>
+      <div class="toggle-option" data-mode="ja-en">🇯🇵 ➔ 🇺🇸</div>
+      <div class="toggle-option" data-mode="en-ja">🇺🇸 ➔ 🇯🇵</div>
+    </div>
+    
+    <label class="ai-switch-wrapper">
+      <span class="ai-switch-label">✨ AI</span>
+      <div class="ai-switch">
+        <input type="checkbox" id="aiModeToggle">
+        <span class="slider"></span>
+      </div>
+    </label>
+  </div>
+
+  <div id="aiSection">
+    <div class="context-input-wrapper">
+      <input type="text" id="contextInput" placeholder="コンテキスト (例: TODOリストの文言として)">
+    </div>
+    <div class="history-chips" id="historyChips">
+      <!-- 履歴チップがここに動的に追加されます -->
+    </div>
+  </div>
+  
+  <textarea id="inputText" placeholder="翻訳したいテキストを入力..."></textarea>
+  <button id="translateBtn" class="main-btn">翻訳する (Translate)</button>
+  <div id="result">ここに翻訳結果が表示されます。</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
