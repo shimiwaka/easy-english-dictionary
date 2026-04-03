@@ -193,9 +193,13 @@
     button.main-btn:hover {
       opacity: 0.9;
     }
-    #result {
+    .result-wrapper {
+      position: relative;
       margin-top: 16px;
+    }
+    #result {
       padding: 12px;
+      padding-right: 36px;
       background-color: #f8f9fa;
       border: 1px solid #e8eaed;
       border-radius: 8px;
@@ -204,6 +208,24 @@
       color: #202124;
       word-wrap: break-word;
       white-space: pre-wrap;
+    }
+    #speakBtn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 4px;
+      display: none;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      border-radius: 4px;
+    }
+    #speakBtn:hover {
+      opacity: 1;
+      background-color: #e8eaed;
     }
     
     .link-btn {
@@ -245,7 +267,10 @@
   
   <textarea id="inputText" placeholder="翻訳したいテキストを入力..."></textarea>
   <button id="translateBtn" class="main-btn">翻訳する (Translate)</button>
-  <div id="result">ここに翻訳結果が表示されます。</div>
+  <div class="result-wrapper">
+    <div id="result">ここに翻訳結果が表示されます。</div>
+    <button id="speakBtn" title="発音を聞く">🔊</button>
+  </div>
 
   <script src="popup.js"></script>
 </body>

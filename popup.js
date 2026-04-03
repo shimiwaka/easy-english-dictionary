@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const translateBtn = document.getElementById('translateBtn');
   const inputText = document.getElementById('inputText');
   const resultDiv = document.getElementById('result');
+  const speakBtn = document.getElementById('speakBtn');
   const langToggle = document.getElementById('langToggle');
   const aiModeToggle = document.getElementById('aiModeToggle');
   const aiSection = document.getElementById('aiSection');
@@ -12,6 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
   let isAiMode = false;
   let contextHistory = [];
   let apiKey = '';
+  let lastTl = 'en';
+
+  speakBtn.addEventListener('click', () => {
+    const text = resultDiv.textContent.trim();
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lastTl === 'en' ? 'en-US' : 'ja-JP';
+    window.speechSynthesis.speak(utter);
+  });
+
+  function showResult(text) {
+    resultDiv.textContent = text;
+    speakBtn.style.display = 'block';
+  }
 
   // 初期設定の読み込み
   chrome.storage.local.get(['isAiMode', 'contextHistory', 'geminiApiKey', 'openaiApiKey'], (result) => {
@@ -109,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let sl = currentLangMode === 'ja-en' ? 'ja' : 'en';
     let tl = currentLangMode === 'ja-en' ? 'en' : 'ja';
+    lastTl = tl;
     let slName = currentLangMode === 'ja-en' ? 'Japanese' : 'English';
     let tlName = currentLangMode === 'ja-en' ? 'English' : 'Japanese';
 
@@ -163,7 +180,7 @@ ${contextText ? `IMPORTANT Context / Instructions:\n${contextText}\n\n` : ''}Tex
           
           // Geminiのレスポンス形式からテキストを抽出
           if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-            resultDiv.textContent = data.candidates[0].content.parts[0].text.trim();
+            showResult(data.candidates[0].content.parts[0].text.trim());
           } else {
             throw new Error('Unexpected API response structure');
           }
@@ -186,7 +203,7 @@ ${contextText ? `IMPORTANT Context / Instructions:\n${contextText}\n\n` : ''}Tex
             translatedText += data[0][i][0];
           }
         }
-        resultDiv.textContent = translatedText;
+        showResult(translatedText);
       } catch (error) {
         resultDiv.innerHTML = `エラーが発生しました: ${error.message}`;
       }
